@@ -27,6 +27,8 @@ enum Action {
         offset_x: u32,
         #[clap(short = 'y', long, help = "image image_crop offset y position.")]
         offset_y: u32,
+        #[clap(short = 'o', long, help = "output directory for Split image.")]
+        output_dir: String,
     }
 }
 
@@ -34,7 +36,7 @@ fn main() {
     let cli: Args = Args::parse();
 
     match cli.action {
-        Action::Crop { path, width, height, offset_x, offset_y } => {
+        Action::Crop { path, width, height, offset_x, offset_y, output_dir } => {
             println!("{}", path);
             let image;
             match image::open(path) {
@@ -42,7 +44,7 @@ fn main() {
                 Err(e) => panic!("{}", e.to_string())
             }
             let img = ImageWrapper::new(image);
-            let crop = ImageCrop::new(img, width, height, offset_x, offset_y);
+            let mut crop = ImageCrop::new(img, width, height, offset_x, offset_y);
             let result = crop.run();
             match result {
                 Ok(count) => println!("The number of images processed is {0}.", count),

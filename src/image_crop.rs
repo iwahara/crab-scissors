@@ -22,11 +22,15 @@ impl<T: Image> ImageCrop<T> {
     /// Execute Image Crop.
     /// # return value
     /// cropping image count or error.
-    pub fn run(&self) -> Result<u32, String> {
+    pub fn run(&mut self) -> Result<u32, String> {
         let vc = Self::vertical_count(self.image.height(), self.height, self.offset_y);
         let hc = Self::horizontal_count(self.image.width(), self.width, self.offset_x);
         for v in 0..vc {
-            for h in 0..hc {}
+            for h in 0..hc {
+                let x = self.height * v;
+                let y = self.width * h;
+                let split_image = self.image.crop(x, y, self.width, self.height);
+            }
         }
         Ok(vc * hc)
     }
@@ -41,6 +45,8 @@ impl<T: Image> ImageCrop<T> {
         let target_width = image_width - offset_x;
         target_width / crop_width
     }
+
+    fn get_path_base(path: String) -> String {}
 }
 
 mod tests {
@@ -64,11 +70,12 @@ mod tests {
             }
 
             fn crop(&mut self, x: u32, y: u32, width: u32, height: u32) -> DynamicImage {
+                println!("x:{},y:{},width:{},height:{}", x, y, width, height);
                 DynamicImage::new_rgb8(33, 33)
             }
         }
         let image = MockImage {};
-        let target = ImageCrop::new(image, 33, 33, 0, 1);
+        let mut target = ImageCrop::new(image, 33, 33, 0, 1);
         let result = target.run();
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), 9);
