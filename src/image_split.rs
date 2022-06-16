@@ -1,6 +1,6 @@
 use crate::image_wrapper::Image;
 
-pub struct ImageCrop<T> where T: Image {
+pub struct ImageSplit<T> where T: Image {
     image: T,
     width: u32,
     height: u32,
@@ -8,7 +8,7 @@ pub struct ImageCrop<T> where T: Image {
     offset_y: u32,
 }
 
-impl<T: Image> ImageCrop<T> {
+impl<T: Image> ImageSplit<T> {
     pub fn new(image: T, width: u32, height: u32, offset_x: u32, offset_y: u32) -> Self {
         Self {
             image,
@@ -19,9 +19,9 @@ impl<T: Image> ImageCrop<T> {
         }
     }
 
-    /// Execute Image Crop.
+    /// Execute Image Split.
     /// # return value
-    /// cropping image count or error.
+    /// split image count or error.
     pub fn run(&mut self) -> Result<u32, String> {
         let vc = Self::vertical_count(self.image.height(), self.height, self.offset_y);
         let hc = Self::horizontal_count(self.image.width(), self.width, self.offset_x);
@@ -46,7 +46,9 @@ impl<T: Image> ImageCrop<T> {
         target_width / crop_width
     }
 
-    fn get_path_base(path: String) -> String {}
+    fn get_path_base(path: String) -> String {
+        String::from("")
+    }
 }
 
 mod tests {
@@ -54,8 +56,8 @@ mod tests {
 
     use image::DynamicImage;
 
-    use crate::image_crop::Image;
-    use crate::ImageCrop;
+    use crate::image_split::Image;
+    use crate::ImageSplit;
 
     #[test]
     fn test_run_success() {
@@ -75,7 +77,7 @@ mod tests {
             }
         }
         let image = MockImage {};
-        let mut target = ImageCrop::new(image, 33, 33, 0, 1);
+        let mut target = ImageSplit::new(image, 33, 33, 0, 1);
         let result = target.run();
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), 9);
