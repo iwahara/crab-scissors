@@ -23,9 +23,9 @@ enum Action {
         width: u32,
         #[clap(long, help = "image image_split height.")]
         height: u32,
-        #[clap(short = 'x', long, help = "image image_split offset x position.")]
+        #[clap(short = 'x', long, default_value_t = 0, help = "image image_split offset x position.")]
         offset_x: u32,
-        #[clap(short = 'y', long, help = "image image_split offset y position.")]
+        #[clap(short = 'y', long, default_value_t = 0, help = "image image_split offset y position.")]
         offset_y: u32,
         #[clap(short = 'o', long, help = "output directory for Split image.")]
         output_dir: String,
@@ -44,7 +44,7 @@ fn main() {
                 Err(e) => panic!("{}", e.to_string())
             }
             let img = ImageWrapper::new(image);
-            let mut split = ImageSplit::new(img, width, height, offset_x, offset_y);
+            let mut split = ImageSplit::new(img, width, height, offset_x, offset_y, output_dir);
             let result = split.run();
             match result {
                 Ok(count) => println!("The number of images processed is {0}.", count),
