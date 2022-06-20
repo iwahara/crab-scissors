@@ -9,10 +9,11 @@ pub struct ImageSplit<T> where T: Image {
     offset_x: u32,
     offset_y: u32,
     output_dir: String,
+    extension: String,
 }
 
 impl<T: Image> ImageSplit<T> {
-    pub fn new(image: T, width: u32, height: u32, offset_x: u32, offset_y: u32, output_dir: String) -> Self {
+    pub fn new(image: T, width: u32, height: u32, offset_x: u32, offset_y: u32, output_dir: String, extension: String) -> Self {
         Self {
             image,
             width,
@@ -20,6 +21,7 @@ impl<T: Image> ImageSplit<T> {
             offset_x,
             offset_y,
             output_dir,
+            extension,
         }
     }
 
@@ -36,7 +38,7 @@ impl<T: Image> ImageSplit<T> {
                 let x = self.width * h;
                 let split_image = self.image.crop(x, y, self.width, self.height);
 
-                let file_path = output_path.join(format!("{}_{}.png", v, h));
+                let file_path = output_path.join(format!("{}_{}.{}", v, h, self.extension));
                 let result = split_image.save(file_path);
                 match result {
                     Ok(_i) => continue,
@@ -74,7 +76,7 @@ mod tests {
         let temp_path = temp_dir.path();
         let str_temp_path = temp_path.to_str().unwrap().to_string();
 
-        let mut target = ImageSplit::new(ImageWrapper::new(image), 20, 20, 0, 0, str_temp_path);
+        let mut target = ImageSplit::new(ImageWrapper::new(image), 20, 20, 0, 0, str_temp_path, String::from("png"));
         let result = target.run();
 
         assert_eq!(result.unwrap(), 50);
