@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use clap::Parser;
 
 use crate::image_split::ImageSplit;
@@ -39,12 +41,22 @@ fn main() {
         Action::Split { path, width, height, offset_x, offset_y, output_dir } => {
             println!("{}", path);
             let image;
-            match image::open(path) {
+            match image::open(&path) {
                 Ok(i) => image = i,
                 Err(e) => panic!("{}", e.to_string())
             }
+            let extension = match Path::new(&path).extension() {
+                Some(ext) => ext,
+                None => panic!("extension not fount.")
+            };
+
+            let output_ext = match extension.to_str() {
+                Some(str) => str.to_string(),
+                None => panic!("extension not fount")
+            };
+
             let img = ImageWrapper::new(image);
-            let mut split = ImageSplit::new(img, width, height, offset_x, offset_y, output_dir);
+            let mut split = ImageSplit::new(img, width, height, offset_x, offset_y, output_dir, output_ext);
             let result = split.run();
             match result {
                 Ok(count) => println!("The number of images processed is {0}.", count),
